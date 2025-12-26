@@ -29,3 +29,7 @@
 
 # Note: Each diff.*.textconv is configured in Git
 # using direct shell commands as per assignment requirements
+
+# Microsoft PowerPoint
+*.ppt diff=ppt
+*.pptx diff=pptx

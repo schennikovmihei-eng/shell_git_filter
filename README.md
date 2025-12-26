@@ -87,3 +87,17 @@ git diff test.pdf
 ## Лицензия
 
 MIT License
+
+### Примечание по PowerPoint
+
+Для файлов PowerPoint используется базовая конвертация через `strings`, которая извлекает только текстовые строки.
+Для полноценной конвертации установите:
+```bash
+# Способ 1: через npm
+npm install -g pptx2md
+
+# Способ 2: через apt
+sudo apt-get install unoconv
+```
+
+После установки перезапустите `./setup-git.sh`.

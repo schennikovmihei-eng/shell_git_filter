@@ -14,7 +14,9 @@ if command -v apt-get >/dev/null 2>&1; then
         antiword \          # doc support
         catdoc \            # xls support
         docx2txt \          # alternative docx
+        libreoffice-common \ # PPTX support via LibreOffice
         python3-pip
+        unoconv \          # PPT/PPTX support
 
     # Install Python packages
     sudo pip3 install xlsx2csv
@@ -27,6 +29,7 @@ elif command -v yum >/dev/null 2>&1; then
         antiword \
         catdoc \
         python3-pip
+        unoconv \          # PPT/PPTX support
 
     sudo pip3 install xlsx2csv
 
@@ -38,6 +41,7 @@ elif command -v brew >/dev/null 2>&1; then
         antiword \
         catdoc \
         docx2txt
+        libreoffice-common \ # PPTX support via LibreOffice
 
     pip3 install xlsx2csv
 
@@ -64,3 +68,8 @@ command -v xls2csv && echo "• xls2csv (XLS)" || echo "✗ xls2csv"
 
 echo ""
 echo "Now run: ./setup-git.sh"
+
+# Optional: PowerPoint converters
+# Uncomment if needed:
+# sudo apt-get install -y unoconv  # for PPT/PPTX
+# npm install -g pptx2md           # alternative for PPTX

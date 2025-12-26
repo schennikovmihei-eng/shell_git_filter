@@ -89,3 +89,29 @@ echo "2. Test with: git diff <office-file>"
 echo ""
 echo "Note: Some formats require additional tools."
 echo "      Run ./install_dependencies.sh to install all tools."
+# PPTX - через pptx2md или unoconv
+if check_command "pptx2md" "pptx2md (npm install -g pptx2md)"; then
+    git config --global diff.pptx.textconv "sh -c 'pptx2md \"\$0\" -'"
+    echo "   Configured: *.pptx → pptx2md"
+elif check_command "unoconv" "unoconv (apt-get install unoconv)"; then
+    git config --global diff.pptx.textconv "sh -c 'unoconv --stdout -f txt \"\$0\" 2>/dev/null'"
+    echo "   Configured: *.pptx → unoconv (to text)"
+elif check_command "soffice" "LibreOffice (apt-get install libreoffice)"; then
+    git config --global diff.pptx.textconv "sh -c 'soffice --headless --convert-to txt:Text --outdir /tmp \"\$0\" >/dev/null 2>&1 && cat /tmp/*.txt && rm -f /tmp/*.txt'"
+    echo "   Configured: *.pptx → LibreOffice"
+fi
+
+# PPT - старый формат, можно через unoconv или catppt
+if check_command "unoconv" "unoconv (apt-get install unoconv)"; then
+    git config --global diff.ppt.textconv "sh -c 'unoconv --stdout -f txt \"\$0\" 2>/dev/null'"
+    echo "   Configured: *.ppt → unoconv"
+elif check_command "catppt" "catppt (part of catdoc package)"; then
+    git config --global diff.ppt.textconv "sh -c 'catppt \"\$0\"'"
+    echo "   Configured: *.ppt → catppt"
+fi
+
+# PowerPoint - basic text extraction
+git config --global diff.pptx.textconv "sh -c 'strings \"\$0\" | head -100'"
+git config --global diff.ppt.textconv "sh -c 'strings \"\$0\" | head -100'"
+echo "   Configured: *.ppt/pptx → strings (basic text extraction)"
+echo "   Note: For better PPTX support install: pptx2md or unoconv"
