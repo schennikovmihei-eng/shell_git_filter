@@ -1,0 +1,31 @@
+# Git textconv configuration for office files
+# Each format uses a direct conversion command
+
+# PDF files
+*.pdf diff=pdf
+
+# Microsoft Word
+*.doc diff=doc
+*.docx diff=docx
+
+# Microsoft Excel
+*.xls diff=xls
+*.xlsx diff=xlsx
+
+# Microsoft PowerPoint
+*.ppt diff=ppt
+*.pptx diff=pptx
+
+# OpenDocument formats
+*.odt diff=odt
+*.ods diff=ods
+*.odp diff=odp
+
+# Rich Text Format
+*.rtf diff=rtf
+
+# Plain text (for completeness)
+*.txt diff=txt
+
+# Note: Each diff.*.textconv is configured in Git
+# using direct shell commands as per assignment requirements

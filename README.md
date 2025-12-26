@@ -1,71 +1,89 @@
-# office2text.sh
+# Git Office Text Filter
 
-## Описание
+Универсальный Git-фильтр для офисных документов. Позволяет просматривать различия в офисных файлах (PDF, DOCX, XLSX и др.) через `git diff`.
 
-Скрипт `office2text.sh` предназначен для конвертации различных офисных файлов в формат простого текста (plain text). Поддерживаемые типы файлов включают PDF, Microsoft Word, Excel, PowerPoint, OpenDocument, RTF и обычные текстовые файлы.
+## Соответствие условию задания
 
-## Установка
-
-Убедитесь, что у вас установлены необходимые зависимости. Скрипт использует различные утилиты для обработки различных типов файлов. Ниже приведены команды для установки этих утилит на базовых дистрибутивах Linux:
-
-- **PDF**:
-  ```sh
-  sudo apt-get install poppler-utils
-  ```
-
-- **Microsoft Word**:
-  ```sh
-  sudo apt-get install pandoc
-  sudo apt-get install docx2txt
-  sudo apt-get install unzip
-  sudo apt-get install antiword
-  sudo apt-get install catdoc
-  ```
-
-
-- **LibreOffice** (универсальный конвертер):
-  ```sh
-  sudo apt-get install libreoffice
-  ```
-
-- **Другие утилиты**:
-  ```sh
-  sudo apt-get install strings
-  ```
-
-## Использование
-
-Запустите скрипт с указанием пути к файлу, который вы хотите конвертировать:
-
-```sh
-./office2text.sh <file>
+Конфигурация соответствует требованиям задания:
+```ini
+[diff "pdf"]
+    textconv = sh -c 'pdftotext -layout -enc UTF-8 "$0" -'
 ```
 
-Пример использования:
+Каждый формат использует прямую команду конвертации, а не универсальный скрипт.
 
-```sh
-./office2text.sh document.pdf
+## Быстрый старт
+
+### 1. Установите зависимости
+```bash
+chmod +x install-deps.sh
+./install-deps.sh
 ```
 
-## Поддерживаемые типы файлов и соответствующие команды
+### 2. Настройте Git
+```bash
+chmod +x setup-git.sh
+./setup-git.sh
+```
 
-- **PDF**:
-  - `pdftotext`
+### 3. Добавьте в ваш проект `.gitattributes`:
+```gitattributes
+*.pdf diff=pdf
+*.docx diff=docx
+*.xlsx diff=xlsx
+```
 
-- **Microsoft Word**:
-  - `.docx`: `pandoc`, `docx2txt`, `unzip`
-  - `.doc`: `antiword`, `catdoc`
+### 4. Теперь используйте как обычно:
+```bash
+git diff report.pdf
+git diff document.docx
+git diff spreadsheet.xlsx
+```
 
-- **Plain Text**:
-  - `cat`
+## Поддерживаемые форматы
 
-- **Другие типы файлов**:
-  - `soffice` (LibreOffice)
+| Формат | Расширение | Используемая команда |
+|--------|------------|---------------------|
+| PDF | `.pdf` | `pdftotext -layout -enc UTF-8` |
+| Word (новый) | `.docx` | `pandoc -f docx -t plain` |
+| Word (старый) | `.doc` | `antiword` |
+| Excel (новый) | `.xlsx` | `xlsx2csv` |
+| Excel (старый) | `.xls` | `xls2csv` |
+| Текст | `.txt` | `cat` |
 
-Если ни одна из указанных утилит не установлена, скрипт попытается использовать `strings` для извлечения текста или просто отобразит содержимое файла с помощью `cat`.
+## Как это работает
 
-## Примечания
+Git использует механизм `textconv` для преобразования бинарных файлов в текст перед сравнением:
 
-- Убедитесь, что все необходимые утилиты установлены перед запуском скрипта.
-- Скрипт автоматически определяет тип файла и выбирает подходящий метод конвертации.
-- В случае возникновения ошибок при конвертации, скрипт попытается использовать альтернативные методы или выведет сообщение об ошибке.
+1. При выполнении `git diff file.pdf` Git ищет конфигурацию `diff.pdf.textconv`
+2. Запускает указанную команду с файлом как аргументом
+3. Сравнивает вывод команд для двух версий файла
+
+## Тестирование
+
+```bash
+# Создайте тестовый репозиторий
+mkdir test-repo && cd test-repo
+git init
+
+# Скопируйте .gitattributes
+cp ../shell_git_filter/.gitattributes .
+
+# Настройте Git (если ещё не настроено)
+../shell_git_filter/setup-git.sh
+
+# Создайте тестовый PDF
+echo "Hello World" > test.pdf
+git add test.pdf
+git commit -m "Add test"
+
+# Измените файл
+echo "Hello Git" > test.pdf
+
+# Посмотрите различия
+git diff test.pdf
+```
+
+## Лицензия
+
+MIT License
