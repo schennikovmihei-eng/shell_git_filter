@@ -84,6 +84,38 @@ echo "Hello Git" > test.pdf
 git diff test.pdf
 ```
 
+## Альтернативный подход: Универсальный скрипт
+
+Если прямой метод не работает (нет нужных конвертеров), можно использовать универсальный скрипт `office2text.sh`:
+
+### Настройка:
+```bash
+# 1. Сделайте скрипт исполняемым
+chmod +x office2text.sh
+
+# 2. Настройте Git для всех форматов
+git config --global diff.pdf.textconv "$(pwd)/office2text.sh"
+git config --global diff.docx.textconv "$(pwd)/office2text.sh"
+git config --global diff.xlsx.textconv "$(pwd)/office2text.sh"
+git config --global diff.pptx.textconv "$(pwd)/office2text.sh"
+git config --global diff.odt.textconv "$(pwd)/office2text.sh"
+```
+
+### Преимущества универсального скрипта:
+- Автоматически определяет тип файла
+- Имеет цепочку фолбэков (если нет одного конвертера, пробует другой)
+- Поддерживает больше форматов "из коробки"
+- Более устойчив к ошибкам
+
+### Как переключиться обратно на прямые команды:
+```bash
+# Удалить универсальную настройку
+git config --global --unset diff.pdf.textconv
+# и т.д.
+
+# Запустить setup-git.sh снова
+./setup-git.sh
+```
 ## Лицензия
 
 MIT License
